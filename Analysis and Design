@@ -1,0 +1,109 @@
+Object Oriented Analysis and Design
+Created by Juliana Geyer-Kim
+Date : 11/17/2025
+
+Analysis:
+
+    Domain:
+
+        A sailing club owns a fleet of boats (sailing boats and power/coach boats). The club needs to track:
+       - Purchase cost of each boat
+       - Maintenance/repair expenses per boat
+       - Enforce a strict rule: total expenses can’t exceed the original purchase price
+
+        Boat
+        BoatType
+        Fleet
+        FleetManagement
+        User/Operator
+        CSV File
+        Fleetdata.db
+
+    Actors (things that do stuff in the reality):
+        Club manager--> views fleets, adds/removes boats, etc.
+        System--> loads data, saves data, displays reports
+
+
+    Function Points:
+        Load fleet from CSV
+        Load fleet from DB
+        Save fleet to DB
+        Print fleet to DB
+        Print fleet report
+        Add new boat
+        Remove boat by name
+        Request expense on boat
+        Enforce spending limit
+
+    Things that are done by non-actors:
+        Serialization
+        Parsing CSV lines
+        Searching fleet by name
+        Calculating remaining budget
+
+
+
+    Scenarios:
+        -	Scenario 1 (launch with CSV): User runs java FleetManagement FleetData.csv, system reads CSV, creates boat objects, adds all boats to the fleet ArrayList, shows menu, user prints fleet, sees al boats, user exits, data saved to FleetData.db
+        -	Scenario 2 (normal – no arguments): User runs java FleetManagement, system loads fleet from FleetData.db, menu appears, user adds a new boat, user tries to spend $8,000 on Speedy – approved, tries to spend $20,000 more – denied, user removes Ostia, exits, new state saved
+        -	Scenario 3 (Invalid):
+        -	Enter invalid CSV, error message
+        -	Try to spend more then allowed, rejected with remaining amount
+        -	Remove non-existent boat, can’t find boat
+
+
+    Design
+
+        Classes:
+           Boat: core domain entity
+           BoatType: enum
+           FleetManagement: Controller + main method
+
+
+        Data:
+
+            Class Boat (variables):
+                type (BoatType, object data, not final, private, accessible through getType(), not mutable)
+                name (String, object data, not final, private, accessible through getName(), not mutable)
+                year (int, object data, not final, private, accessible through getYear(), not mutable)
+                makeModel (String, object data, not final, private, accessible through getMakeModel(), not mutable)
+                length (int, object data, not final, private, accessible through getLength(), not mutable)
+                purchasePrice (double, object data, not final, private, accessible through getPurchasePrice(), not mutable)
+                expenses (double, object data, not final, private, accessible through getExpenses(), mutable)
+
+            Enum BoatType constants:
+                POWER (class data, enum, Implicitly final, public, not mutable)
+                SAILING ((class data, enum, Implicitly final, public, not mutable)
+
+            Class FleetManagement:
+                fleet (class data, ArrayList<Boat>, final, private, no direct getter, mutable)
+                keyboard (class data, Scanner, final, private, no getter, mutable)
+                DB_FILE (class data, String, final, private, no getter, not mutable)
+
+
+    Methods:
+
+        Class Boat:
+            Boat: ()
+            getType()
+            getName()
+            getYear()
+            getMakeModel()
+            getLength()
+            getPurchasePrice()
+            getExpense()
+            addExpense()
+            getRemainingSpending()
+            toString()
+
+        Class FleetManagement:
+            main()
+            loadFromCSV()
+            loadFromDB()
+            saveToDB()
+            printFleet()
+            addBoat()
+            removeBoat()
+            handleExpense()
+            menuLoop()
+
