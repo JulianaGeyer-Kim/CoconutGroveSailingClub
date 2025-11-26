@@ -68,23 +68,21 @@ public class FleetManagement {
 
     private static void loadFromCSV(String filename) {
         fleet.clear();
-
-        try {
-            Scanner fileScanner = new Scanner(new File(filename));
-
+        try (Scanner fileScanner = new Scanner(new File(filename))) {
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine().trim();
+
                 if (line.isEmpty()) {
                     continue;
-                }//end of if statement
+                } // end of if (empty line)
 
                 // This line handles tabs, commas, and any amount of spaces
-                String[] parts = line.split("[,\t]+");   // <— THIS IS THE MAGIC LINE
+                String[] parts = line.split("[,\t]+");  // MAGIC LINE
 
                 // Clean up any extra spaces in each part
                 for (int i = 0; i < parts.length; i++) {
                     parts[i] = parts[i].trim();
-                }//end of for loop
+                } // end of for loop
 
                 if (parts.length >= 6) {
                     BoatType type = BoatType.valueOf(parts[0].toUpperCase());
@@ -94,17 +92,16 @@ public class FleetManagement {
                     int length = Integer.parseInt(parts[4]);
                     double paid = Double.parseDouble(parts[5]);
 
-                    Boat b = new Boat(type, name, year, make, length, paid);
-                    fleet.add(b);
-                }//end of if statement
-            }//end of while loop
-
-
-        }//end of try
-        catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }//end of catch
-    }//end of loadFromCSV method
+                    Boat thisBoat = new Boat(type, name, year, make, length, paid);
+                    fleet.add(thisBoat);
+                } // end of if (parts.length >= 6)
+            } // end of while loop
+        } catch (FileNotFoundException e) {
+            System.out.println("CSV file not found: " + filename);
+        } catch (Exception e) {
+            System.out.println("Error reading CSV file: " + e.getMessage());
+        } // end of try-catch
+    } // end of loadFromCSV method
 
     /**
      * Loads fleet from serialized DB file.
@@ -139,15 +136,17 @@ public class FleetManagement {
      * Saves fleet to serialized DB file.
      */
     private static void saveToDB() {
-        //   System.out.println("Trying to save the boats to the file...");
+        try (ObjectOutputStream saver = new ObjectOutputStream(
+                new FileOutputStream("FleetData.db"))) {
 
-        try {
-            ObjectOutputStream saver = new ObjectOutputStream(new FileOutputStream("FleetData.db"));
             saver.writeObject(fleet);
-            saver.close();
-            //  System.out.println("All boats saved to FleetData.db");
+
+
         } catch (IOException e) {
-            System.out.println("Saving failed");
+            System.err.println("ERROR: Failed to save fleet to FleetData.db");
+            System.err.println("Reason: " + e.getMessage());
+            // Optional: print stack trace only in debug mode
+            // e.printStackTrace();
         }
     }
 
@@ -337,6 +336,8 @@ public class FleetManagement {
 
 
 }//end of FleetManagement class
+
+
 
 
 
