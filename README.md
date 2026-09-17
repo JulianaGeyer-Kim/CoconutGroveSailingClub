@@ -89,4 +89,3 @@ I created this project to apply Java and object-oriented programming concepts to
 ## Author
 
 **Juliana Geyer-Kim**
-
